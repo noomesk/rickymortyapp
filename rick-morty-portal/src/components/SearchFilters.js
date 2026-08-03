@@ -26,7 +26,7 @@ class SearchFilters extends HTMLElement {
           <option value="">Todos</option>
           <option value="Alive">Alive</option>
           <option value="Dead">Dead</option>
-          <option value="unknown">Unknown</option>
+          <option value="unknown">Unknown</option>  
         </select>
         <button type="submit">Buscar</button>
       </form>
@@ -35,3 +35,6 @@ class SearchFilters extends HTMLElement {
 }
 
 customElements.define('search-filters', SearchFilters);
+
+// en el caso de unknown line29: está con casing: lowercase (todo en minusculas, x eso recibe un 
+//value=unknown en minúsculas, pero se muestra al user como: Unknown)
