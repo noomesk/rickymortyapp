@@ -37,4 +37,12 @@ class SearchFilters extends HTMLElement {
 customElements.define('search-filters', SearchFilters);
 
 // en el caso de unknown line29: está con casing: lowercase (todo en minusculas, x eso recibe un 
-//value=unknown en minúsculas, pero se muestra al user como: Unknown)
+//value=unknown en minúsculas, pero se muestra al user como: Unknown) ajaj q cool
+/* TIPOS DE CASING de las API:
+"alive"     // lowercase (todo en minúsculas)
+
+"ALIVE"     // UPPERCASE (todo en mayúsculas)
+
+"Alive"     // Capitalized o Pascal word (primera letra mayúscula)
+
+"aLive"     // casing mezclado */ 
