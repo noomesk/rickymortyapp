@@ -14,12 +14,12 @@ export class RickAndMortyService {
     if (name) params.append('name', name); // Si "name" NO está vacío (string vacío es "falsy" en JS), agrega el par name=loQueSeaQueEscribióElUsuario
     if (status) params.append('status', status); // iwal q name
 
-    const url = `${RickAndMortyService.#BASE_URL}?${params.toString()}`;
+    const url = `${RickAndMortyService.#BASE_URL}?${params.toString()}`; // para evitar duplicar código
 
     // AQUÍ es tu turno: fetch + try/catch + await
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url); //url xq ya creé la variable atrás 
 
     if (!response.ok) {
       throw new Error("No fue posible obtener el personajeS");
@@ -35,3 +35,7 @@ export class RickAndMortyService {
 }
   
 }
+
+// TEMPORAL - solo para pruebas manuales en consola, lo eliminaré después
+window.RickAndMortyService = RickAndMortyService;
+// ajaj que linea tan cool, me caes bien linea
