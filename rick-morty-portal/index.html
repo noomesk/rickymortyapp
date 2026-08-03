@@ -1,0 +1,24 @@
+<!-- código q ya viene def por el enunciado-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick & Morty Portal Finder - Proyecto Final</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <rick-morty-app></rick-morty-app> <!--este es el orquestador: centraliza la toma de decisiones en un solo lugar-->
+<!--el orden de los <script> importa conceptualmente aunque técnicamente con type="module" 
+y defer implícito no rompa nada — se cargan RickAndMortyService y los componentes
+ "hoja" (CharacterCard, SearchFilters, FavoritesList) antes que RickMortyApp, 
+ que es quien los orquesta y depende de que ya existan.-->
+    <script type="module" src="./src/services/RickAndMortyService.js"></script> <!--servicio: hablar con la API-->
+    <script type="module" src="./src/components/CharacterCard.js"></script> <!--músicos o leaf modules: muestra un personaje -->
+    <script type="module" src="./src/components/SearchFilters.js"></script> <!--muestra los filtros y emite eventos-->
+    <script type="module" src="./src/components/FavoritesList.js"></script> <!--muestra favoritos-->
+    <script type="module" src="./src/components/RickMortyApp.js"></script> <!--cerebro (orquestador)-->
+
+</body>
+</html>
