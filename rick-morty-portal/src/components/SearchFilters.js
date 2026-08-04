@@ -8,6 +8,7 @@ class SearchFilters extends HTMLElement {
     // Este método se ejecuta automáticamente cuando el elemento
     // ya está insertado en el documento (cuando el navegador lo "monta")
     this.render();
+    this.setupEventListeners(); // nueva línea para escuchar el evento: boton buscar: detecta cuando haga clic
   }
 
   render() {
@@ -31,6 +32,22 @@ class SearchFilters extends HTMLElement {
         <button type="submit">Buscar</button>
       </form>
     `;
+
+    
+  }
+setupEventListeners() {
+  const form = this.shadowRoot.querySelector('form'); // Obtiene el formulario del Shadow DOM, Referencia al formulario
+
+
+  form.addEventListener('submit', (event) => { // Escucha el envío del formulario, Maneja el evento submit
+    event.preventDefault(); // Evita que la página se recargue!  importaaaanshi**  Cancela el comportamiento por defecto del formulario
+
+    const input = this.shadowRoot.querySelector('input'); // Obtiene el campo de texto,  Referencia al input
+    const select = this.shadowRoot.querySelector('select'); // Obtiene el menú desplegable, Referencia al select
+
+    const query = input.value; // Guarda el texto escrito por el usuario, Obtiene el valor del input
+    const status = select.value; // Guarda la opción seleccionada, Obtiene el valor del select
+   });
   }
 }
 
