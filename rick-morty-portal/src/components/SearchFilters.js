@@ -52,7 +52,7 @@ setupEventListeners() {
       bubbles: true, //esto permite que suba por el arbol del DOM  (jaja como una burbuja xd amo las burbujas)
       composed: true //permite q atraviese la pared del shadowDOM
       });//crear el custom event 
-      
+
     this.dispatchEvent(evento); //disparar el evento  
    });
   }
@@ -70,3 +70,15 @@ customElements.define('search-filters', SearchFilters); // registra el nombre de
 "Alive"     // Capitalized o Pascal word (primera letra mayúscula)
 
 "aLive"     // casing mezclado */ 
+
+
+/* para probar en consola que la comunicación ya sirve (bubbles y composed):
+
+document.querySelector('search-filters').addEventListener('search-submitted', (e) => {
+  console.log('Evento recibido:', e.detail);
+});
+
+ si si: 
+ el evento sale de SearchFilters, atraviesa el Shadow DOM (gracias a composed: true), 
+ sube por el árbol del DOM (gracias a bubbles: true), 
+ y es capturado con el payload correcto {query: 'rick', status: 'Alive'}. */
