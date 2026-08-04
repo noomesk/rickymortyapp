@@ -37,5 +37,5 @@ export class RickAndMortyService {
 }
 
 // TEMPORAL - solo para pruebas manuales en consola, lo eliminaré después
-window.RickAndMortyService = RickAndMortyService;
+//window.RickAndMortyService = RickAndMortyService;
 // ajaj que linea tan cool, me caes bien linea

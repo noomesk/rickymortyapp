@@ -47,11 +47,18 @@ setupEventListeners() {
 
     const query = input.value; // Guarda el texto escrito por el usuario, Obtiene el valor del input
     const status = select.value; // Guarda la opción seleccionada, Obtiene el valor del select
+    const evento = new CustomEvent('search-submitted',{ //crear el evento 
+      detail: { query, status }, //objeto con 3 propiedades, en detail va la info real el "paq de datos q quiero enviar"
+      bubbles: true, //esto permite que suba por el arbol del DOM  (jaja como una burbuja xd amo las burbujas)
+      composed: true //permite q atraviese la pared del shadowDOM
+      });//crear el custom event 
+      
+    this.dispatchEvent(evento); //disparar el evento  
    });
   }
 }
 
-customElements.define('search-filters', SearchFilters);
+customElements.define('search-filters', SearchFilters); // registra el nombre de la clase, dsps de q ya la defini
 
 // en el caso de unknown line29: está con casing: lowercase (todo en minusculas, x eso recibe un 
 //value=unknown en minúsculas, pero se muestra al user como: Unknown) ajaj q cool
