@@ -1,3 +1,4 @@
+//este si usa ShadowDOM
 class SearchFilters extends HTMLElement {
   constructor() {
     super(); // obligatorio: le dice a HTMLElement que se inicialice primero
