@@ -121,4 +121,9 @@ renderCharacters() { // este método solo ocurre si: else if (this.state.status 
   }
 }
 
-customElements.define('rick-morty-app', RickMortyApp);
+customElements.define('rick-morty-app', RickMortyApp); // crear una instancia de la clase RickMortyApp
+// y ejecutar sus métodos:
+//- constructor()
+//- connectedCallback()
+//- render()
+//- setupEventListeners()
