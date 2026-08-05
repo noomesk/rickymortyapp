@@ -33,6 +33,7 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     // solo CharacterCard y SearchFilters lo requieren, RT-02)
     this.innerHTML = `
       <search-filters></search-filters>
+      <favorites-list></favorites-list> 
       <div class="app-status"></div>
       <div class="results-container"></div>
     `;
@@ -57,10 +58,20 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     const { characterId, characterData } = event.detail;
     this.toggleFavorite(characterId, characterData);
   });
+
+//nuevo evento remove-favorite en setupEventListeners() para ecuchar el btn fav
+    this.addEventListener('remove-favorite', (event) => {
+    const { characterId } = event.detail;
+    this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
+    this.updateFavoritesDisplay();
+    this.updateStatusDisplay(); // para que los corazones de las tarjetas se actualicen también MEUEJJE
+});
+
   }
 
   toggleFavorite(characterId, characterData) {
   const existe = this.state.favorites.some(fav => fav.id === characterId);
+
 
   if (existe) {
     this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
@@ -127,6 +138,30 @@ updateStatusDisplay() {
     statusDiv.textContent = `Error: ${this.state.errorMessage}`; // Muestra el mensaje del error
   }
 }
+
+//nuevo método pa mantener actualizada la parte de favoritos amiga:
+updateFavoritesDisplay() {
+  const favList = this.querySelector('favorites-list');
+  favList.setFavorites(this.state.favorites);
+}
+
+toggleFavorite(characterId, characterData) {
+  const existe = this.state.favorites.some(fav => fav.id === characterId);
+
+  if (existe) {
+    this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
+  } else {
+    this.state.favorites.push({
+      id: characterData.id,
+      name: characterData.name,
+      image: characterData.image
+    });
+  }
+
+  this.updateFavoritesDisplay(); // nuevo
+  this.updateStatusDisplay();
+}
+
 
 renderCharacters() { // este método solo ocurre si: else if (this.state.status === 'success') usuario buscó y la API respondió
   const resultsDiv = this.querySelector('.results-container'); // Busca el contenedor donde se van a insertar las tarjetas
