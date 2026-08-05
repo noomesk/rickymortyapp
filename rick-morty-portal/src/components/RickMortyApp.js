@@ -48,12 +48,17 @@ saveFavorites() {
     // Por ahora, renderizado simple sin Shadow DOM en el contenedor raíz
     // (RickMortyApp NO necesita Shadow DOM según nuestros requerimientos —
     // solo CharacterCard y SearchFilters lo requieren, RT-02)
-    this.innerHTML = `
+    
+    // LE VOA PONER TÍTULO A LA PÁGINA: 
+    this.innerHTML = ` 
+      <header class="app-header">
+        <h1>Rick & Morty Portal</h1> 
+      </header>
       <search-filters></search-filters>
-      <favorites-list></favorites-list> 
+      <favorites-list></favorites-list>
       <div class="app-status"></div>
       <div class="results-container"></div>
-    `;
+  `;
     // Crea la estructura base: el buscador, un espacio para mensajes 
     // de estado (Cargando/Error/Éxito), y un contenedor vacío donde 
     // van a aparecer las tarjetas. Usa this.innerHTML (no shadowRoot) 
