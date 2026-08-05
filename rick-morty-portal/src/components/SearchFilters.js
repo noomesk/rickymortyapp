@@ -3,24 +3,32 @@ class SearchFilters extends HTMLElement {
   constructor() {
     super(); // obligatorio: le dice a HTMLElement que se inicialice primero
     this.attachShadow({ mode: 'open' }); // crea la cápsula de cristal
+    this.cssText = ''; // nuevo para los estilos y colores del buscador con css 
   }
 
   connectedCallback() {
     // Este método se ejecuta automáticamente cuando el elemento
     // ya está insertado en el documento (cuando el navegador lo "monta")
     this.render();
-    this.setupEventListeners(); // nueva línea para escuchar el evento: boton buscar: detecta cuando haga clic
+    // ya no llamamos setupEventListeners() aquí directamente, porque
+    // ahora se llama DESPUÉS de que el HTML exista, dentro de render()
+    // (ver comentario más abajo en render())
   }
 
-  render() {
+  // Nuevo: trae el archivo .css como texto plano usando fetch,
+  // mismo patrón ya usado en CharacterCard y en el service
+  async loadStyles() {
+    if (this.cssText) return this.cssText; // evita pedirlo de nuevo si ya lo tenemos
+    const response = await fetch('/src/styles/SearchFilters.css');
+    this.cssText = await response.text();
+    return this.cssText;
+  }
+
+  async render() { // ahora render es async porque espera el fetch del CSS
+    const css = await this.loadStyles(); // espera a que el CSS esté listo
+
     this.shadowRoot.innerHTML = `
-      <style>
-        .filters-container {
-          display: flex;
-          gap: 10px;
-          padding: 16px;
-        }
-      </style>
+      <style>${css}</style>
 
       <form class="filters-container">
         <input type="text" placeholder="Buscar personaje..." />
@@ -34,8 +42,13 @@ class SearchFilters extends HTMLElement {
       </form>
     `;
 
-    
+    // se llama aquí, DESPUÉS de que this.shadowRoot.innerHTML ya se llenó,
+    // porque antes de esto no existía ni el form ni el input ni el select
+    // en el Shadow DOM todavía (si se llamaba antes, querySelector no
+    // encontraba nada y hubiera dado error)
+    this.setupEventListeners();
   }
+
 setupEventListeners() {
   const form = this.shadowRoot.querySelector('form'); // Obtiene el formulario del Shadow DOM, Referencia al formulario
 
