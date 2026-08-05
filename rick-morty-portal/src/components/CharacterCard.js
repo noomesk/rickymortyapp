@@ -15,7 +15,7 @@ class CharacterCard extends HTMLElement {
   render() {
     if (!this.character) return; // si no hay datos aún, no pintames nada (no rederiza nada ps)
 
-    const { name, image, status, species } = this.character; // desestructuración de objetos: Extrae los datos necesarios del personaje
+     const { name, image, status, species, origin, location, episode } = this.character;// desestructuración de objetos: Extrae los datos necesarios del personaje
 
 
     this.shadowRoot.innerHTML = `
@@ -38,9 +38,12 @@ class CharacterCard extends HTMLElement {
         <img src="${image}" alt="${name}" />
         <h3>${name}</h3>
         <p>${status} - ${species}</p>
+        <p><strong>Origen:</strong> ${origin?.name ?? 'Desconocido'}</p> 
+        <p><strong>Ubicación:</strong> ${location?.name ?? 'Desconocida'}</p>
+        <p><strong>Episodios:</strong> ${episode?.length ?? 0}</p>
       </div>
     `;
   }
-}
+} //le agregué optional chaning para q no se rompa xd, asi como Nullish Coalescing ??:  si origin?.name termina siendo undefined o null, usa 'Desconocido' en su lugar"
 
 customElements.define('character-card', CharacterCard); // Registra el componente personalizado
