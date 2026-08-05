@@ -1,0 +1,93 @@
+/* ============================================
+   CharacterCard - Estilos aislados en Shadow DOM
+   Paleta inspirada en Rick & Morty:
+   Fondo negro + acentos: verde portal, rosa Jerry, amarillo Meeseeks
+   ============================================ */
+
+.card {
+  background-color: #111111;           /* fondo oscuro, estética "portal" */
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 16px;
+  width: 220px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  color: #ededed;
+  position: relative;
+  overflow: hidden;
+
+  /* Reciclado de mi anterior proyecto jaj 2 (art-piece-container):
+     transform + will-change para animaciones suaves por GPU */
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover de la tarjeta completa — reciclado y adaptado de mi proyecto (showcase)
+   art-piece-container:hover, usando verde portal (#97ce4c) como acento */
+.card:hover {
+  transform: scale(1.02) translateY(-5px) translateZ(0);
+  box-shadow: 0 0 40px rgba(151, 206, 76, 0.25);
+  border-color: #97ce4c;
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+/* Efecto sutil de zoom en la imagen al hacer hover en la tarjeta, vamo a ver si funciona
+   intentando recrear la idea del showcase xd con GSAP (scale 1.05) pero en CSS puro */
+.card:hover img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.card h3 {
+  margin: 10px 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ededed;
+  transition: color 0.3s ease;
+}
+
+/* El nombre cambia a color acento al hacer hover, 
+   inspirado en el group-hover:text-luxury-accent del showcase amigaaa o sea.. */
+.card:hover h3 {
+  color: #97ce4c;
+}
+
+.card p {
+  font-size: 13px;
+  color: #888888;
+  margin: 4px 0;
+}
+
+/* Botón de favorito */
+.fav-btn {
+  cursor: pointer;
+  font-size: 22px;
+  border: none;
+  background: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: transform 0.2s ease;
+}
+
+/* Micro-interacción: el corazón "rebota" levemente al hover,
+   detalle pequeñito q me parece bonis :3 */
+.fav-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Accesibilidad: reciclado de mi segundo proyecto [portafolio jsaj] (.counter:focus-visible) */
+.fav-btn:focus-visible {
+  outline: 2px solid #f0e14a;
+  outline-offset: 2px;
+}
