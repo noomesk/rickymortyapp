@@ -10,7 +10,7 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     this.state = {
       status: 'idle',       // 'idle' | 'loading' | 'success' | 'error'
       characters: [],
-      favorites: [],
+      favorites: this.loadFavorites(), // lee desde localStorage al iniciar ** pa persistencia de datos
       errorMessage: ''
     };
     // El "cerebro" de toda la app. Es el ÚNICO lugar donde vive el 
@@ -18,13 +18,30 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     // dado está aquí: si está cargando, qué personajes tiene, cuáles 
     // son favoritos, y si hubo un error wii 
   }
+//nuevo favoritos para localStorage: -----------------------------------
+  loadFavorites() {
+  try {
+    const stored = localStorage.getItem('favorites');
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error al leer favoritos de localStorage:', error);
+    return []; // si algo está corrupto, no c rompe la app, c empieza limpio (c devuelve en un array vacio)
+  
+  }
+}
 
+saveFavorites() {
+  localStorage.setItem('favorites', JSON.stringify(this.state.favorites));
+}
+
+//--------------------------------------------------------------------------
   connectedCallback() {
     this.render();
     this.setupEventListeners();
     // Se ejecuta automáticamente cuando <rick-morty-app> aparece en 
     // el documento. Primero pinta el HTML inicial, luego activa los 
     // "oídos" del componente (los listeners).
+    this.updateFavoritesDisplay(); // muestra favoritos guardados desde el arranque :3 q emociónnn!
   }
 
   render() {
@@ -63,6 +80,7 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     this.addEventListener('remove-favorite', (event) => {
     const { characterId } = event.detail;
     this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
+    this.saveFavorites(); // nuevo para LocalStorage 
     this.updateFavoritesDisplay();
     this.updateStatusDisplay(); // para que los corazones de las tarjetas se actualicen también MEUEJJE
 });
@@ -76,7 +94,7 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
   if (existe) {
     this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
   } else {
-    // Modelo Favorite reducido, tal como definimos en el Sprint 0
+    // Modelo Favorite reducido, siguiendo la regla d cuando c definió en el Sprint 0
     this.state.favorites.push({
       id: characterData.id,
       name: characterData.name,
@@ -84,7 +102,10 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     });
   }
 
+  this.saveFavorites(); // nuevo para localStorage jehajej
+  this.updateFavoritesDisplay(); //para actualizar las de favs
   this.updateStatusDisplay(); // re-renderiza para reflejar el corazón actualizado
+
 }
 
   async handleSearch(query, status) {
@@ -145,23 +166,7 @@ updateFavoritesDisplay() {
   favList.setFavorites(this.state.favorites);
 }
 
-toggleFavorite(characterId, characterData) {
-  const existe = this.state.favorites.some(fav => fav.id === characterId);
-
-  if (existe) {
-    this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
-  } else {
-    this.state.favorites.push({
-      id: characterData.id,
-      name: characterData.name,
-      image: characterData.image
-    });
-  }
-
-  this.updateFavoritesDisplay(); // nuevo
-  this.updateStatusDisplay();
-}
-
+//---------------------------------------------------------------
 
 renderCharacters() { // este método solo ocurre si: else if (this.state.status === 'success') usuario buscó y la API respondió
   const resultsDiv = this.querySelector('.results-container'); // Busca el contenedor donde se van a insertar las tarjetas
