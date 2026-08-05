@@ -3,46 +3,26 @@ class FavoritesList extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.favorites = [];
+    this.cssText = ''; // nuevo para FavoriteList muejej 
   }
+// Nuevo: trae el archivo .css como texto plano usando fetch, (q ya lo habia usado en charactercard.js jejhe)
+   async loadStyles() {
+    if (this.cssText) return this.cssText;
+    const response = await fetch('/src/styles/FavoritesList.css');
+    this.cssText = await response.text();
+    return this.cssText;
+  }  
 
-  setFavorites(favorites) {
+  async setFavorites(favorites) { // le puse async await 
     this.favorites = favorites;
-    this.render();
+    await this.render();
   }
 
-  render() {
+  async render() {  //aki tmbn le puse async await 
+    const css = await this.loadStyles(); //nueva de style FavoriteList 
+// aqui le cambio los estilos, por los nuevos con css:
     this.shadowRoot.innerHTML = `
-      <style>
-        .favorites-container {
-          position: fixed;
-          top: 10px;
-          right: 10px;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          padding: 10px;
-          max-width: 220px;
-          max-height: 300px;
-          overflow-y: auto;
-        }
-        .fav-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 6px;
-        }
-        .fav-item img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-        }
-        .remove-btn {
-          margin-left: auto;
-          cursor: pointer;
-          border: none;
-          background: none;
-        }
-      </style>
+      <style>${css}</style>
 
       <div class="favorites-container">
         <h4>Favoritos (${this.favorites.length})</h4>
@@ -55,6 +35,7 @@ class FavoritesList extends HTMLElement {
         `).join('')}
       </div>
     `;
+
 
     this.setupEventListeners();
   }
