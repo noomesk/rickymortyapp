@@ -51,7 +51,30 @@ class RickMortyApp extends HTMLElement { // Hereda todo el comportamiento base d
     // Cuando SearchFilters grita 'search-submitted', RickMortyApp 
     // lo escucha, extrae el payload (query, status), y decide qué 
     // hacer: llamar a handleSearch.
+
+//nuevo, para el btn de favortios: 
+    this.addEventListener('toggle-favorite', (event) => {
+    const { characterId, characterData } = event.detail;
+    this.toggleFavorite(characterId, characterData);
+  });
   }
+
+  toggleFavorite(characterId, characterData) {
+  const existe = this.state.favorites.some(fav => fav.id === characterId);
+
+  if (existe) {
+    this.state.favorites = this.state.favorites.filter(fav => fav.id !== characterId);
+  } else {
+    // Modelo Favorite reducido, tal como definimos en el Sprint 0
+    this.state.favorites.push({
+      id: characterData.id,
+      name: characterData.name,
+      image: characterData.image
+    });
+  }
+
+  this.updateStatusDisplay(); // re-renderiza para reflejar el corazón actualizado
+}
 
   async handleSearch(query, status) {
     this.state.status = 'loading';
@@ -113,7 +136,8 @@ renderCharacters() { // este método solo ocurre si: else if (this.state.status 
 
   this.state.characters.forEach((character) => {  // Recorre cada personaje que llegó desde la API (basicamente dice: por cada personaje que tengo, haz esto)
     const card = document.createElement('character-card'); // // Crea un nuevo componente desde js: <character-card></character-card>
-    card.setCharacter(character); // Le entrega los datos del personaje al componente CharacterCard (Aquí ocurre la comunicación entre componentes muajaja)
+    const isFavorite = this.state.favorites.some(fav => fav.id === character.id); //* nuevo, para favoritos
+    card.setCharacter(character, isFavorite); // Le entrega los datos del personaje al componente CharacterCard (Aquí ocurre la comunicación entre componentes muajaja)
     fragment.appendChild(card); // Agrega la tarjeta creada al fragmento temporal (la guarda temporalmente) todavia no son visibles, estan esperanding...
   });
 
