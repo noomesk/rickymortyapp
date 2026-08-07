@@ -1,0 +1,66 @@
+/* ============================================
+   FavoritesList - Estilos aislados en Shadow DOM
+   Misma paleta que CharacterCard para consistencia visual
+   ============================================ */
+
+.favorites-container {
+  position: fixed;
+  top: 100px;   /* debajo del header y buscador, antes estaba en 10 */
+  right: 20px;
+  background-color: #111111;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px;
+  width: 220px; /*nueva con header */ 
+  max-height: calc(100vh - 140px); /* nunca se sale de la pantalla */
+  overflow-y: auto;
+  color: #ededed;
+  font-family: 'Inter', sans-serif;
+  z-index: 100; /* asegura que quede por encima de otras tarjetas */
+}
+
+.favorites-container h4 {
+  margin-bottom: 10px;
+  color: #97ce4c;
+  font-size: 15px;
+}
+
+.fav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Mismo tipo de hover que las tarjetas principales, para consistencia */
+.fav-item:hover {
+  background-color: #1a1a1a;
+  transform: translateX(-3px);
+}
+
+.fav-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.fav-item span {
+  font-size: 13px;
+  flex: 1;
+}
+
+.remove-btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.remove-btn:hover {
+  transform: scale(1.3);
+}

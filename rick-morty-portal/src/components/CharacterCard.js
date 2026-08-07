@@ -5,44 +5,32 @@ class CharacterCard extends HTMLElement {
     this.attachShadow({ mode: 'open' }); // Crea el Shadow DOM del componente
     this.character = null; // aquí se va a guardar el personaje recibido
     this.isFavorite = false; // nuevo: estado visual local de esta tarjeta *
+    this.cssText = ''; // aquí se va a guardar el CSS ya cargado :3 wii 
+  }
+// Nuevo: trae el archivo .css como texto plano usando fetch, (q ya lo habia usado en el service)
+  async loadStyles() {
+    if (this.cssText) return this.cssText; // evita pedirlo de nuevo si ya lo tenemos
+    const response = await fetch('/src/styles/CharacterCard.css'); //BUG** fetch('../styles/CharacterCard.css') no se está sirviendo bien la ruta: :5500/styles/CharacterCard.css FALTA src lokooo!
+    this.cssText = await response.text();
+    return this.cssText;
   }
 
   // Método propio: RickMortyApp lo va a llamar para "entregarle" el personaje
-  setCharacter(character, isFavorite = false) { //le agregué favorite *
+  async setCharacter(character, isFavorite = false) { //le agregué favorite *
     this.character = character; // Guarda el personaje recibido
     this.isFavorite = isFavorite; //nueva con fav *
-    this.render(); // Actualiza la tarjeta con la nueva información
+    await this.render(); // Actualiza la tarjeta con la nueva información // / ahora render es async porque espera el fetch del CSS
     this.setupEventListeners(); // hay que re-enganchar el listener cada render *
   }
 
-  render() {
+  async render() {   // ahora render es async porque espera el fetch del CSS
     if (!this.character) return; // si no hay datos aún, no pintames nada (no rederiza nada ps)
 
      const { name, image, status, species, origin, location, episode } = this.character;// desestructuración de objetos: Extrae los datos necesarios del personaje
-
+     const css = await this.loadStyles(); // espera a que el CSS esté listo
 
     this.shadowRoot.innerHTML = `
-      <style>
-        .card {
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          padding: 12px;
-          width: 200px;
-          text-align: center;
-          font-family: sans-serif;
-          position: relative;
-        }
-        .card img {
-          width: 100%;
-          border-radius: 8px;
-        }
-        .fav-btn {
-          cursor: pointer;
-          font-size: 20px;
-          border: none;
-          background: none;
-        }
-      </style>
+      <style>${css}</style>
 
       <div class="card">
         <button class="fav-btn">${this.isFavorite ? '❤️' : '🤍'}</button>
