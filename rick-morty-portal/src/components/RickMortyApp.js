@@ -120,7 +120,7 @@ saveFavorites() {
     // y refleja eso en pantalla INMEDIATAMENTE (por eso c ve en pantalla
     //  "Cargando..." aunque sea muy rápido).
 
-    try {
+    try {  //SE PUEDE ENCAPSULAR**
       const data = await RickAndMortyService.getCharacters(query, status);
       this.state.characters = data.results;
       this.state.status = 'success';

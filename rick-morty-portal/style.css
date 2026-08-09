@@ -51,7 +51,7 @@ body {
   justify-content: center;
 }
 
-/* Responsive: en pantallas pequeñas, no reservar espacio lateral, aunque esto lo reviso más adelante xd*/
+/* Responsive: en pantallas pequeñas, no reservar espacio lateral, aunque esto lo reviso bien más adelante xd*/
 @media (max-width: 768px) {
   .results-container {
     padding: 20px;

@@ -4,7 +4,28 @@ class FavoritesList extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.favorites = [];
     this.cssText = ''; // nuevo para FavoriteList muejej 
+    this.setupEventListeners(); // se registra UNA sola vez, aquí (para DELEGACIÓN y reutilizarlo en cada render() jej)
   }
+
+    // DELEGACIÓN: un solo listener en el contenedor padre, para q escuche el boton
+    // no uno por cada botón individual, y cuando alguien haga clic suba con bubble para saber cual fue eeeeeej
+
+setupEventListeners() {
+  this.shadowRoot.addEventListener('click', (event) => {
+    const btn = event.target.closest('.remove-btn');
+    if (!btn) return;
+
+    const characterId = Number(btn.dataset.id);
+
+    const evento = new CustomEvent('remove-favorite', {
+      detail: { characterId },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(evento);
+  });
+}
+
 // Nuevo: trae el archivo .css como texto plano usando fetch, (q ya lo habia usado en charactercard.js jejhe)
    async loadStyles() {
     if (this.cssText) return this.cssText;
@@ -36,29 +57,8 @@ class FavoritesList extends HTMLElement {
       </div>
     `;
 
-
-    this.setupEventListeners();
   }
 
-  setupEventListeners() {
-    const container = this.shadowRoot.querySelector('.favorites-container');
-
-    // DELEGACIÓN: un solo listener en el contenedor padre, para q escuche el boton
-    // no uno por cada botón individual, y cuando alguien haga clic suba con bubble para saber cual fue eeeeeej
-    container.addEventListener('click', (event) => {
-      const btn = event.target.closest('.remove-btn');
-      if (!btn) return; // si el clic no fue en un botón de quitar, ignora
-
-      const characterId = Number(btn.dataset.id);
-
-      const evento = new CustomEvent('remove-favorite', {
-        detail: { characterId },
-        bubbles: true,
-        composed: true
-      });
-      this.dispatchEvent(evento);
-    });
-  }
 }
 
 customElements.define('favorites-list', FavoritesList);
