@@ -22,7 +22,7 @@ export class RickAndMortyService {
     const response = await fetch(url); //url xq ya creé la variable atrás 
 
     if (!response.ok) {
-      throw new Error("No fue posible obtener el personajeS");
+      throw new Error("No fue posible obtener el personaje");
     }
 
     const data = await response.json();
