@@ -44,7 +44,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  /* nuevo, para manejo de validación de errores de input*/
 }
 
 .filters-container button:hover {
@@ -55,4 +54,22 @@
 .filters-container button:focus-visible {
   outline: 2px solid #f0e14a;
   outline-offset: 2px;
+}
+
+/* eto ES NUEVITOOO: Mensaje de error: flex-basis 100% lo obliga a ocupar toda la fila,
+   empujando al select y al botón a una nueva línea en vez de quedar
+   apretujados a la derecha del input */
+.error-message {
+  flex-basis: 100%;
+  text-align: center;
+  color: #ff4444;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Se agrega dinámicamente al input cuando la validación falla
+   (ver classList.add('input-error') en setupEventListeners) */
+.input-error {
+  border-color: #ff4444 !important;
+  box-shadow: 0 0 12px rgba(255, 68, 68, 0.3) !important;
 }
