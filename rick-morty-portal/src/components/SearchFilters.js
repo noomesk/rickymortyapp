@@ -24,30 +24,32 @@ class SearchFilters extends HTMLElement {
     return this.cssText;
   }
 
-  async render() { // ahora render es async porque espera el fetch del CSS
-    const css = await this.loadStyles(); // espera a que el CSS esté listo
+  async render() {
+  const css = await this.loadStyles();
 
-    this.shadowRoot.innerHTML = `
-      <style>${css}</style>
+  this.shadowRoot.innerHTML = `
+    <style>${css}</style>
 
-      <form class="filters-container">
-        <input type="text" placeholder="Buscar personaje..." />
-        <select>
-          <option value="">Todos</option>
-          <option value="Alive">Alive</option>
-          <option value="Dead">Dead</option>
-          <option value="unknown">Unknown</option>  
-        </select>
-        <button type="submit">Buscar</button>
-      </form>
-    `;
+    <form class="filters-container">
+      <input type="text" placeholder="Buscar personaje..." />
+      <p class="error-message"></p>
+      <select>
+        <option value="">Todos</option>
+        <option value="Alive">Alive</option>
+        <option value="Dead">Dead</option>
+        <option value="unknown">Unknown</option>  
+      </select>
+      <button type="submit">Buscar</button>
+    </form>
+  `;
+
+  this.setupEventListeners();
+}
 
     // se llama aquí, DESPUÉS de que this.shadowRoot.innerHTML ya se llenó,
     // porque antes de esto no existía ni el form ni el input ni el select
     // en el Shadow DOM todavía (si se llamaba antes, querySelector no
     // encontraba nada y hubiera dado error)
-    this.setupEventListeners();
-  }
 
 setupEventListeners() {
   const form = this.shadowRoot.querySelector('form'); // Obtiene el formulario del Shadow DOM, Referencia al formulario
@@ -56,11 +58,27 @@ setupEventListeners() {
   form.addEventListener('submit', (event) => { // Escucha el envío del formulario, Maneja el evento submit
     event.preventDefault(); // Evita que la página se recargue!  importaaaanshi**  Cancela el comportamiento por defecto del formulario
 
+// inserto validación en caso de que el personaje no esté o sea vacio: 
     const input = this.shadowRoot.querySelector('input'); // Obtiene el campo de texto,  Referencia al input
     const select = this.shadowRoot.querySelector('select'); // Obtiene el menú desplegable, Referencia al select
+    const errorMsg = this.shadowRoot.querySelector('.error-message'); // nuevo PARA VALIDAR ERRORRRR 
 
-    const query = input.value; // Guarda el texto escrito por el usuario, Obtiene el valor del input
+    const query = input.value.trim(); // .trim() quita espacios sobrantes al inicio/final // Y ESTO Guarda el texto escrito por el usuario, Obtiene el valor del input
     const status = select.value; // Guarda la opción seleccionada, Obtiene el valor del select
+    
+    const nombreValido = /^[a-zA-Z\s'.]+$/;
+    //CONDICIÓN: si el query está vacío, O SI el query no es válido según 
+    // el patrón → entra al bloque de error".
+    if (query === '' || !nombreValido.test(query)) {
+    input.classList.add('input-error');
+    errorMsg.textContent = 'Escribe un nombre válido (solo letras).';
+    return; // se detiene aquí, NO dispara el evento — esto es el CU-01 flujo alternativo (VALIDA VALORES PS)
+    }
+
+    input.classList.remove('input-error');
+    errorMsg.textContent = '';
+
+     
     const evento = new CustomEvent('search-submitted',{ //crear el evento 
       detail: { query, status }, //objeto con 3 propiedades, en detail va la info real el "paq de datos q quiero enviar"
       bubbles: true, //esto permite que suba por el arbol del DOM  (jaja como una burbuja xd amo las burbujas)
