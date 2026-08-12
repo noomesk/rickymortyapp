@@ -1,8 +1,33 @@
 import { RickAndMortyService } from '../services/RickAndMortyService.js';
 
+/**
+ * Componente principal de la aplicación Rick & Morty.
+ * Gestiona el estado global de la app, incluyendo la búsqueda de personajes,
+ * el manejo de favoritos (con persistencia en localStorage) y la renderización
+ * de los distintos estados de la UI (carga, éxito, error).
+ *
+ * @class RickMortyApp
+ * @extends HTMLElement
+ */
 class RickMortyApp extends HTMLElement {
+  /**
+   * Crea una instancia de RickMortyApp e inicializa el estado interno.
+   * El estado incluye el status de la búsqueda, los personajes obtenidos,
+   * los favoritos cargados desde localStorage y el mensaje de error (si aplica).
+   *
+   * @constructor
+   */
   constructor() {
     super();
+
+    /**
+     * Estado interno del componente.
+     * @type {Object}
+     * @property {'idle'|'loading'|'success'|'error'} status - Estado actual de la búsqueda.
+     * @property {Array<Object>} characters - Lista de personajes obtenidos de la API.
+     * @property {Array<{id: number, name: string, image: string}>} favorites - Lista de personajes favoritos.
+     * @property {string} errorMessage - Mensaje de error en caso de fallo en la búsqueda.
+     */
     this.state = {
       status: 'idle',
       characters: [],
@@ -11,6 +36,12 @@ class RickMortyApp extends HTMLElement {
     };
   }
 
+  /**
+   * Carga la lista de favoritos almacenada en localStorage.
+   * Si no existe o hay un error al parsear, retorna un array vacío.
+   *
+   * @returns {Array<{id: number, name: string, image: string}>} Lista de favoritos cargados.
+   */
   loadFavorites() {
     try {
       const stored = localStorage.getItem('favorites');
@@ -21,16 +52,36 @@ class RickMortyApp extends HTMLElement {
     }
   }
 
+  /**
+   * Guarda la lista actual de favoritos en localStorage.
+   *
+   * @returns {void}
+   */
   saveFavorites() {
     localStorage.setItem('favorites', JSON.stringify(this.state.favorites));
   }
 
+  /**
+   * Callback del ciclo de vida de Custom Elements.
+   * Se ejecuta cuando el elemento es insertado en el DOM.
+   * Renderiza la estructura inicial, configura los listeners de eventos
+   * y actualiza la vista de favoritos.
+   *
+   * @returns {void}
+   */
   connectedCallback() {
     this.render();
     this.setupEventListeners();
     this.updateFavoritesDisplay();
   }
 
+  /**
+   * Renderiza la estructura HTML base de la aplicación,
+   * incluyendo el header, los componentes de búsqueda, favoritos
+   * y los contenedores de estado y resultados.
+   *
+   * @returns {void}
+   */
   render() {
     this.innerHTML = `
       <header class="app-header">
@@ -43,6 +94,14 @@ class RickMortyApp extends HTMLElement {
     `;
   }
 
+  /**
+   * Configura los listeners de eventos personalizados que maneja la aplicación:
+   * - 'search-submitted': dispara una búsqueda de personajes.
+   * - 'toggle-favorite': añade o elimina un personaje de favoritos.
+   * - 'remove-favorite': elimina un personaje específico de favoritos.
+   *
+   * @returns {void}
+   */
   setupEventListeners() {
     this.addEventListener('search-submitted', (event) => {
       const { query, status } = event.detail;
@@ -63,6 +122,14 @@ class RickMortyApp extends HTMLElement {
     });
   }
 
+  /**
+   * Añade o elimina un personaje de la lista de favoritos según si ya existe.
+   * Actualiza el localStorage y refresca las vistas de favoritos y estado.
+   *
+   * @param {number} characterId - ID del personaje a alternar en favoritos.
+   * @param {{id: number, name: string, image: string}} characterData - Datos del personaje.
+   * @returns {void}
+   */
   toggleFavorite(characterId, characterData) {
     const existe = this.state.favorites.some(fav => fav.id === characterId);
 
@@ -81,6 +148,15 @@ class RickMortyApp extends HTMLElement {
     this.updateStatusDisplay();
   }
 
+  /**
+   * Realiza una búsqueda de personajes usando el servicio RickAndMortyService.
+   * Actualiza el estado de la aplicación según el resultado (loading, success o error).
+   *
+   * @async
+   * @param {string} query - Texto de búsqueda (nombre del personaje).
+   * @param {string} status - Filtro de estado del personaje (alive, dead, unknown).
+   * @returns {Promise<void>}
+   */
   async handleSearch(query, status) {
     this.state.status = 'loading';
     this.updateStatusDisplay();
@@ -97,6 +173,12 @@ class RickMortyApp extends HTMLElement {
     this.updateStatusDisplay();
   }
 
+  /**
+   * Actualiza la sección de estado y resultados en el DOM según el estado actual
+   * de la aplicación ('loading', 'success' o 'error').
+   *
+   * @returns {void}
+   */
   updateStatusDisplay() {
     const statusDiv = this.querySelector('.app-status');
     const resultsDiv = this.querySelector('.results-container');
@@ -113,11 +195,22 @@ class RickMortyApp extends HTMLElement {
     }
   }
 
+  /**
+   * Actualiza el componente 'favorites-list' con la lista actual de favoritos.
+   *
+   * @returns {void}
+   */
   updateFavoritesDisplay() {
     const favList = this.querySelector('favorites-list');
     favList.setFavorites(this.state.favorites);
   }
 
+  /**
+   * Renderiza las tarjetas de personajes ('character-card') en el contenedor de resultados,
+   * marcando cada una como favorita o no según corresponda.
+   *
+   * @returns {void}
+   */
   renderCharacters() {
     const resultsDiv = this.querySelector('.results-container');
     const fragment = document.createDocumentFragment();
