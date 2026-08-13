@@ -11,7 +11,7 @@ import { RickAndMortyService } from '../services/RickAndMortyService.js';
  */
 class RickMortyApp extends HTMLElement {
   /**
-   * Crea una instancia de RickMortyApp e inicializa el estado interno.
+   * ¿q hace? crea una instancia de RickMortyApp e inicializa el estado interno.
    * El estado incluye el status de la búsqueda, los personajes obtenidos,
    * los favoritos cargados desde localStorage y el mensaje de error (si aplica).
    *
@@ -31,7 +31,7 @@ class RickMortyApp extends HTMLElement {
     this.state = {
       status: 'idle',
       characters: [],
-      favorites: this.loadFavorites(),
+      favorites: this.loadFavorites(), // Seguro aquí: no toca el DOM, solo localStorage*
       errorMessage: ''
     };
   }
@@ -70,9 +70,9 @@ class RickMortyApp extends HTMLElement {
    * @returns {void}
    */
   connectedCallback() {
-    this.render();
-    this.setupEventListeners();
-    this.updateFavoritesDisplay();
+    this.render(); //  Necesita el elemento ya insertado en el DOM*
+    this.setupEventListeners(); // Por convención se agrupa junto al render*
+    this.updateFavoritesDisplay(); //Necesita que favorites-list ya exista en el DOM (creado por render())*
   }
 
   /**
@@ -227,3 +227,7 @@ class RickMortyApp extends HTMLElement {
 }
 
 customElements.define('rick-morty-app', RickMortyApp);
+
+/**
+ * z
+ */

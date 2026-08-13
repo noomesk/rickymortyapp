@@ -1,13 +1,53 @@
 //Tmbn usa ShadowDOM 
+
+/**
+ * Componente que representa la tarjeta visual de un personaje de Rick & Morty.
+ * Utiliza Shadow DOM para encapsular sus estilos y estructura, y carga su propio
+ * archivo CSS de forma dinámica mediante fetch.
+ *
+ * @class CharacterCard
+ * @extends HTMLElement
+ */
 class CharacterCard extends HTMLElement {
+  /**
+   * Inicializa el componente, crea el Shadow DOM y define las propiedades
+   * internas que usará para guardar el personaje, su estado de favorito
+   * y el CSS cargado.
+   *
+   * @constructor
+   */
   constructor() {
     super(); // Inicializa la clase base HTMLElement
     this.attachShadow({ mode: 'open' }); // Crea el Shadow DOM del componente
+
+    /**
+     * Datos del personaje actualmente mostrado en la tarjeta.
+     * @type {Object|null}
+     */
     this.character = null; // aquí se va a guardar el personaje recibido
+
+    /**
+     * Indica si el personaje actual está marcado como favorito.
+     * @type {boolean}
+     */
     this.isFavorite = false; // nuevo: estado visual local de esta tarjeta *
+
+    /**
+     * Contenido CSS cargado desde el archivo externo, cacheado para evitar
+     * múltiples peticiones fetch innecesarias.
+     * @type {string}
+     */
     this.cssText = ''; // aquí se va a guardar el CSS ya cargado :3 wii 
   }
-// Nuevo: trae el archivo .css como texto plano usando fetch, (q ya lo habia usado en el service)
+
+  /**
+   * Carga el archivo CSS externo del componente como texto plano usando fetch.
+   * Si el CSS ya fue cargado previamente (cacheado en `this.cssText`), lo retorna
+   * directamente sin volver a pedirlo.
+   *
+   * @async
+   * @returns {Promise<string>} El contenido del archivo CSS como texto.
+   */
   async loadStyles() {
     if (this.cssText) return this.cssText; // evita pedirlo de nuevo si ya lo tenemos
     const response = await fetch('/src/styles/CharacterCard.css'); //BUG** fetch('../styles/CharacterCard.css') no se está sirviendo bien la ruta: :5500/styles/CharacterCard.css FALTA src lokooo!
@@ -15,7 +55,16 @@ class CharacterCard extends HTMLElement {
     return this.cssText;
   }
 
-  // Método propio: RickMortyApp lo va a llamar para "entregarle" el personaje
+  /**
+   * Recibe los datos de un personaje y su estado de favorito, actualiza las
+   * propiedades internas, renderiza la tarjeta y vuelve a enganchar los
+   * event listeners (ya que el contenido del Shadow DOM se regenera en cada render).
+   *
+   * @async
+   * @param {Object} character - Objeto con los datos del personaje (nombre, imagen, estado, etc.).
+   * @param {boolean} [isFavorite=false] - Indica si el personaje debe mostrarse como favorito.
+   * @returns {Promise<void>}
+   */
   async setCharacter(character, isFavorite = false) { //le agregué favorite *
     this.character = character; // Guarda el personaje recibido
     this.isFavorite = isFavorite; //nueva con fav *
@@ -23,11 +72,19 @@ class CharacterCard extends HTMLElement {
     this.setupEventListeners(); // hay que re-enganchar el listener cada render *
   }
 
-  async render() {   // ahora render es async porque espera el fetch del CSS
-    if (!this.character) return; // si no hay datos aún, no pintames nada (no rederiza nada ps)
+  /**
+   * Renderiza visualmente la tarjeta del personaje dentro del Shadow DOM,
+   * incluyendo su imagen, nombre, estado, especie, origen, ubicación y
+   * cantidad de episodios. Si no hay un personaje asignado, no renderiza nada.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
+  async render() {
+    if (!this.character) return;
 
-     const { name, image, status, species, origin, location, episode } = this.character;// desestructuración de objetos: Extrae los datos necesarios del personaje
-     const css = await this.loadStyles(); // espera a que el CSS esté listo
+     const { name, image, status, species, origin, location, episode } = this.character;
+     const css = await this.loadStyles();
 
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
@@ -43,8 +100,16 @@ class CharacterCard extends HTMLElement {
       </div>
     `;
   }
-//nuevo para el botón de favs jejej 
-    setupEventListeners() {
+
+  /**
+   * Configura el listener del botón de favoritos. Al hacer click, dispara
+   * un evento personalizado 'toggle-favorite' que burbujea hacia arriba
+   * (bubbles) y atraviesa los límites del Shadow DOM (composed), para que
+   * pueda ser capturado por componentes ancestros como RickMortyApp.
+   *
+   * @returns {void}
+   */
+  setupEventListeners() {
     const favBtn = this.shadowRoot.querySelector('.fav-btn');
     
     favBtn.addEventListener('click', () => {
@@ -56,6 +121,6 @@ class CharacterCard extends HTMLElement {
       this.dispatchEvent(evento);
     });
   }
-} //le agregué optional chaning para q no se rompa xd, asi como Nullish Coalescing ??:  si origin?.name termina siendo undefined o null, usa 'Desconocido' en su lugar"
+}
 
-customElements.define('character-card', CharacterCard); // Registra el componente personalizado
+customElements.define('character-card', CharacterCard);
